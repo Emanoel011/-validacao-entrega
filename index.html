@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Confirmar Entrega</title>
+  <title>Confirmação de Entrega</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #0f1117;
-      color: #e2e8f0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0d0d14;
+      color: #e0e0e0;
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -19,314 +19,400 @@
     }
 
     .card {
-      background: #1a1d2e;
-      border: 1px solid #2d3148;
+      background: #1c1c2e;
+      border: 1px solid #2a2a45;
       border-radius: 16px;
-      padding: 32px 28px;
+      padding: 36px 32px;
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
     }
 
     .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 28px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .logo span { font-size: 2.4rem; }
+    .logo h1 {
+      font-size: 1.2rem;
+      color: #00BFFF;
+      margin-top: 8px;
+      font-weight: 700;
+    }
+    .logo p {
+      font-size: 0.82rem;
+      color: #666680;
+      margin-top: 4px;
     }
 
-    .logo-icon {
-      width: 44px;
-      height: 44px;
-      background: #3b82f6;
+    /* Badge da loja vinculada */
+    .loja-badge {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #0a1a2a;
+      border: 1px solid #00BFFF33;
       border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
+      padding: 10px 14px;
+      margin-bottom: 20px;
+      font-size: 0.85rem;
     }
-
-    .logo-text {
-      font-size: 17px;
-      font-weight: 600;
-      color: #f1f5f9;
+    .loja-badge .info { color: #a0c8e0; line-height: 1.4; }
+    .loja-badge .info strong { color: #00BFFF; display: block; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+    .btn-trocar {
+      background: none;
+      border: 1px solid #333355;
+      border-radius: 6px;
+      color: #666680;
+      font-size: 0.72rem;
+      padding: 5px 9px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      margin-left: 12px;
     }
-
-    .logo-sub {
-      font-size: 12px;
-      color: #64748b;
-    }
+    .btn-trocar:hover { border-color: #e74c3c; color: #e74c3c; }
 
     label {
       display: block;
-      font-size: 13px;
-      color: #94a3b8;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #9090aa;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
       margin-bottom: 6px;
-      margin-top: 18px;
     }
 
     input {
       width: 100%;
-      padding: 13px 14px;
-      background: #0f1117;
-      border: 1px solid #2d3148;
-      border-radius: 10px;
-      color: #f1f5f9;
-      font-size: 16px;
+      background: #12121e;
+      border: 1px solid #2a2a45;
+      border-radius: 8px;
+      padding: 12px 14px;
+      color: #e0e0e0;
+      font-size: 1rem;
       outline: none;
       transition: border-color 0.2s;
+      margin-bottom: 18px;
+      font-family: 'Segoe UI', monospace;
+    }
+    input:focus { border-color: #00BFFF; }
+    input::placeholder { color: #44445a; }
+
+    .divider {
+      height: 1px;
+      background: #2a2a45;
+      margin: 18px 0;
     }
 
-    input:focus { border-color: #3b82f6; }
-    input::placeholder { color: #2d3556; }
-
-    button {
+    .btn {
       width: 100%;
       padding: 14px;
-      margin-top: 24px;
-      background: #3b82f6;
-      color: #fff;
+      background: #00BFFF;
+      color: #000;
       border: none;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 600;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
       cursor: pointer;
       transition: background 0.2s, transform 0.1s;
     }
+    .btn:hover { background: #009acd; }
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { background: #2a2a45; color: #555566; cursor: not-allowed; }
+    .btn.green { background: #2ecc71; }
+    .btn.green:hover { background: #27ae60; }
 
-    button:hover:not(:disabled) { background: #2563eb; }
-    button:active:not(:disabled) { transform: scale(0.98); }
-    button:disabled { background: #1e3a5f; color: #4a6080; cursor: not-allowed; }
-
-    /* Notificação */
-    .toast {
+    .status-box {
       display: none;
-      margin-top: 20px;
-      border-radius: 12px;
+      border-radius: 10px;
       padding: 16px 18px;
-      font-size: 14px;
+      font-size: 0.92rem;
       font-weight: 500;
+      margin-top: 20px;
       line-height: 1.5;
-      animation: slideIn 0.3s ease;
     }
+    .status-box.success { background: #0a2e1a; border: 1px solid #2ecc71; color: #2ecc71; }
+    .status-box.error   { background: #2e0a0a; border: 1px solid #e74c3c; color: #e74c3c; }
+    .status-box.loading { background: #0a1a2e; border: 1px solid #00BFFF; color: #00BFFF; }
 
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateY(-8px); }
-      to   { opacity: 1; transform: translateY(0); }
+    /* Tela de vinculação */
+    .tela { display: none; }
+    .tela.ativa { display: block; }
+
+    .hint {
+      font-size: 0.78rem;
+      color: #55556a;
+      text-align: center;
+      margin-top: 10px;
+      line-height: 1.5;
     }
-
-    .toast.success {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      background: #052e16;
-      border: 1px solid #166534;
-      color: #4ade80;
-    }
-
-    .toast.error {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      background: #1c0a0a;
-      border: 1px solid #7f1d1d;
-      color: #f87171;
-    }
-
-    .toast.warning {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      background: #1c1500;
-      border: 1px solid #78350f;
-      color: #fbbf24;
-    }
-
-    .toast-icon {
-      font-size: 20px;
-      line-height: 1;
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-
-    .toast-body { display: flex; flex-direction: column; gap: 2px; }
-    .toast-title { font-weight: 700; font-size: 13px; letter-spacing: 0.3px; }
-    .toast-msg { font-weight: 400; opacity: 0.85; }
-
-    .spinner {
-      display: inline-block;
-      width: 15px;
-      height: 15px;
-      border: 2px solid rgba(255,255,255,0.25);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      vertical-align: middle;
-      margin-right: 8px;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
 
     .footer {
-      margin-top: 22px;
       text-align: center;
-      font-size: 12px;
-      color: #2d3556;
-      line-height: 1.5;
+      margin-top: 24px;
+      font-size: 0.75rem;
+      color: #44445a;
     }
   </style>
 </head>
 <body>
-
 <div class="card">
 
   <div class="logo">
-    <div class="logo-icon">🛵</div>
-    <div>
-      <div class="logo-text">Confirmar Entrega</div>
-      <div class="logo-sub">Sistema Gerencial</div>
-    </div>
+    <span>🛵</span>
+    <h1>Confirmação de Entrega</h1>
+    <p id="logo_sub">Carregando...</p>
   </div>
 
-  <label for="num_pedido">Número do pedido</label>
-  <input
-    type="number"
-    id="num_pedido"
-    placeholder="Ex: 1042"
-    inputmode="numeric"
-    autocomplete="off"
-  />
-
-  <label for="codigo">Código informado pelo cliente</label>
-  <input
-    type="text"
-    id="codigo"
-    placeholder="Ex: AB12"
-    autocomplete="off"
-    style="text-transform: uppercase; letter-spacing: 3px; font-size: 18px; font-weight: 600;"
-  />
-
-  <button id="btn" onclick="confirmarEntrega()">
-    Confirmar entrega
-  </button>
-
-  <div class="toast" id="toast">
-    <div class="toast-icon" id="toast-icon"></div>
-    <div class="toast-body">
-      <div class="toast-title" id="toast-title"></div>
-      <div class="toast-msg" id="toast-msg"></div>
-    </div>
+  <!-- ══════════════════════════════════════════ -->
+  <!-- TELA 1: Vinculação pelo HWID               -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="tela" id="tela_vincular">
+    <label>Código da Máquina (HWID)</label>
+    <input
+      id="inp_hwid"
+      type="text"
+      placeholder="Ex: FA46EE1684CC9DFCFDB608A8F82B5040"
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="characters"
+      spellcheck="false"
+    />
+    <p class="hint">
+      Digite o código de qualquer máquina do seu estabelecimento.<br>
+      Você encontra esse código em <strong>Minha Assinatura</strong> no sistema.
+    </p>
+    <div class="divider"></div>
+    <button class="btn green" onclick="vincularLoja()">🔗 Vincular Estabelecimento</button>
+    <div class="status-box" id="status_vincular"></div>
   </div>
 
-  <div class="footer">Digite o número do pedido e o código<br>que o cliente te informou</div>
+  <!-- ══════════════════════════════════════════ -->
+  <!-- TELA 2: Confirmar entrega (já vinculado)   -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="tela" id="tela_confirmar">
+    <!-- Badge mostrando loja vinculada -->
+    <div class="loja-badge">
+      <div class="info">
+        <strong>🏪 Estabelecimento vinculado</strong>
+        <span id="lbl_loja_id">—</span>
+      </div>
+      <button class="btn-trocar" onclick="trocarLoja()">↩ Trocar loja</button>
+    </div>
 
+    <label>Número do Pedido</label>
+    <input id="inp_pedido" type="text" placeholder="Ex: DEL-479585" autocomplete="off" />
+
+    <label>Código de Validação</label>
+    <input id="inp_validacao" type="text" placeholder="Código fornecido pelo operador" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" />
+
+    <div class="divider"></div>
+    <button class="btn" id="btn_confirmar" onclick="confirmarEntrega()">✅ Confirmar Entrega</button>
+    <div class="status-box" id="status_confirmar"></div>
+  </div>
+
+  <div class="footer">SisPDV • Sistema de Gestão</div>
 </div>
 
 <script>
   const SUPABASE_URL = "https://oaxrdgmrzllyhjiskmfj.supabase.co";
-  const SUPABASE_ANON_KEY = "sb_publishable_DbRmua1Lzy9AFcAXBPYc6w_Nws3TnXm";
+  // Chave anon (pública) — segura para usar no site
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9heHJkZ21yemxseWhqaXNrbWZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc2NjE4MDMsImV4cCI6MjA2MzIzNzgwM30.WyXBhY5FvGvp2JFjhbzeSGzE31eT6aSjNHs2o-CJ3Mg";
 
-  const btn = document.getElementById("btn");
-  const toast = document.getElementById("toast");
+  const LS_LOJA   = "pdv_loja_id";
+  const LS_HWID   = "pdv_hwid_vinculado";
 
-  function showToast(tipo, titulo, msg) {
-    toast.className = "toast " + tipo;
-    const icons = { success: "✓", error: "✕", warning: "!" };
-    document.getElementById("toast-icon").textContent = icons[tipo] || "ℹ";
-    document.getElementById("toast-title").textContent = titulo;
-    document.getElementById("toast-msg").textContent = msg;
-    toast.style.animation = "none";
-    void toast.offsetWidth;
-    toast.style.animation = "";
+  function headers() {
+    return {
+      "apikey": SUPABASE_KEY,
+      "Authorization": `Bearer ${SUPABASE_KEY}`,
+      "Content-Type": "application/json",
+    };
   }
 
-  async function confirmarEntrega() {
-    const numPedido = document.getElementById("num_pedido").value.trim();
-    const codigo = document.getElementById("codigo").value.trim().toUpperCase();
+  function mostrarStatus(boxId, tipo, html) {
+    const box = document.getElementById(boxId);
+    box.className = "status-box " + tipo;
+    box.innerHTML = html;
+    box.style.display = "block";
+  }
 
-    if (!numPedido || !codigo) {
-      showToast("warning", "ATENÇÃO", "Preencha o número do pedido e o código.");
+  function esconderStatus(boxId) {
+    const box = document.getElementById(boxId);
+    box.style.display = "none";
+  }
+
+  // ── Inicialização ─────────────────────────────────────────
+  window.addEventListener("load", () => {
+    const lojaId = localStorage.getItem(LS_LOJA);
+    if (lojaId) {
+      mostrarTelaConfirmar(lojaId);
+    } else {
+      mostrarTelaVincular();
+    }
+  });
+
+  function mostrarTelaVincular() {
+    document.getElementById("tela_vincular").classList.add("ativa");
+    document.getElementById("tela_confirmar").classList.remove("ativa");
+    document.getElementById("logo_sub").textContent = "Digite o HWID para vincular seu estabelecimento";
+  }
+
+  function mostrarTelaConfirmar(lojaId) {
+    document.getElementById("tela_confirmar").classList.add("ativa");
+    document.getElementById("tela_vincular").classList.remove("ativa");
+    document.getElementById("lbl_loja_id").textContent = lojaId;
+    document.getElementById("logo_sub").textContent = "Confirme a entrega do pedido";
+  }
+
+  // ── Vincular loja pelo HWID ───────────────────────────────
+  async function vincularLoja() {
+    const hwid = document.getElementById("inp_hwid").value.trim().toUpperCase();
+    if (!hwid || hwid.length < 10) {
+      mostrarStatus("status_vincular", "error", "⚠️ Digite um código de máquina válido.");
       return;
     }
 
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span>Verificando...';
+    mostrarStatus("status_vincular", "loading", "⏳ Buscando estabelecimento...");
 
     try {
-      const busca = await fetch(
-        `${SUPABASE_URL}/rest/v1/entregas?id=eq.${numPedido}&select=id,codigo_validacao,status`,
-        {
-          headers: {
-            apikey: SUPABASE_ANON_KEY,
-            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-            Accept: "application/json",
-          },
-        }
+      // Busca qualquer entrega com esse HWID para descobrir o loja_id
+      const url = `${SUPABASE_URL}/rest/v1/entregas?hwid=eq.${encodeURIComponent(hwid)}&select=loja_id&limit=1`;
+      const resp = await fetch(url, { headers: headers() });
+
+      if (!resp.ok) throw new Error("Erro ao consultar servidor.");
+
+      const dados = await resp.json();
+
+      if (!dados || dados.length === 0) {
+        mostrarStatus("status_vincular", "error",
+          "❌ Código não encontrado.<br>Verifique o HWID e tente novamente.<br><small style='color:#888'>O sistema precisa ter enviado pelo menos 1 delivery para o Supabase com essa máquina.</small>"
+        );
+        return;
+      }
+
+      const lojaId = dados[0].loja_id;
+      if (!lojaId) {
+        mostrarStatus("status_vincular", "error", "❌ Loja não identificada. Contate o suporte.");
+        return;
+      }
+
+      // Salva no navegador do motoboy
+      localStorage.setItem(LS_LOJA, lojaId);
+      localStorage.setItem(LS_HWID, hwid);
+
+      mostrarStatus("status_vincular", "success",
+        `✅ Estabelecimento <strong>${lojaId}</strong> vinculado com sucesso!`
       );
 
-      if (!busca.ok) {
-        const errText = await busca.text();
-        showToast("error", "ERRO DE CONEXÃO", `Falha ao consultar pedido. (${busca.status})`);
-        console.error("Erro Supabase SELECT:", busca.status, errText);
-        return;
-      }
+      setTimeout(() => mostrarTelaConfirmar(lojaId), 1200);
 
-      const pedidos = await busca.json();
-
-      if (!pedidos || pedidos.length === 0) {
-        showToast("error", "NÃO ENCONTRADO", "Pedido não encontrado. Verifique o número.");
-        return;
-      }
-
-      const pedido = pedidos[0];
-
-      if (pedido.status === "Entregue") {
-        showToast("warning", "JÁ CONFIRMADO", "Este pedido já foi confirmado anteriormente.");
-        return;
-      }
-
-      if (pedido.codigo_validacao !== codigo) {
-        showToast("error", "CÓDIGO INCORRETO", "Peça ao cliente para confirmar o código.");
-        return;
-      }
-
-      const update = await fetch(
-        `${SUPABASE_URL}/rest/v1/entregas?id=eq.${numPedido}`,
-        {
-          method: "PATCH",
-          headers: {
-            apikey: SUPABASE_ANON_KEY,
-            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-            "Content-Type": "application/json",
-            Prefer: "return=minimal",
-          },
-          body: JSON.stringify({ status: "Entregue" }),
-        }
-      );
-
-      if (!update.ok) {
-        const errText = await update.text();
-        showToast("error", "ERRO AO CONFIRMAR", `Não foi possível atualizar. (${update.status})`);
-        console.error("Erro Supabase PATCH:", update.status, errText);
-        return;
-      }
-
-      showToast("success", "ENTREGA CONFIRMADA", `Pedido #${numPedido} confirmado! O estabelecimento foi notificado.`);
-      document.getElementById("num_pedido").value = "";
-      document.getElementById("codigo").value = "";
-
-    } catch (e) {
-      showToast("error", "SEM CONEXÃO", "Verifique sua internet e tente novamente.");
-      console.error("Erro de rede:", e);
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = "Confirmar entrega";
+    } catch (err) {
+      mostrarStatus("status_vincular", "error", "❌ Erro de conexão: " + err.message);
     }
   }
 
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") confirmarEntrega();
+  // ── Trocar loja ───────────────────────────────────────────
+  function trocarLoja() {
+    if (!confirm("Deseja desvincular desta loja e vincular a outra?")) return;
+    localStorage.removeItem(LS_LOJA);
+    localStorage.removeItem(LS_HWID);
+    document.getElementById("inp_hwid").value = "";
+    document.getElementById("inp_pedido").value = "";
+    document.getElementById("inp_validacao").value = "";
+    document.getElementById("btn_confirmar").disabled = false;
+    document.getElementById("btn_confirmar").textContent = "✅ Confirmar Entrega";
+    esconderStatus("status_confirmar");
+    mostrarTelaVincular();
+  }
+
+  // ── Confirmar entrega ─────────────────────────────────────
+  async function confirmarEntrega() {
+    const lojaId          = localStorage.getItem(LS_LOJA);
+    const codigo_pedido   = document.getElementById("inp_pedido").value.trim();
+    const codigo_validacao = document.getElementById("inp_validacao").value.trim();
+    const btn             = document.getElementById("btn_confirmar");
+
+    if (!lojaId)          { trocarLoja(); return; }
+    if (!codigo_pedido)   { mostrarStatus("status_confirmar", "error", "⚠️ Digite o número do pedido."); return; }
+    if (!codigo_validacao){ mostrarStatus("status_confirmar", "error", "⚠️ Digite o código de validação."); return; }
+
+    btn.disabled = true;
+    mostrarStatus("status_confirmar", "loading", "⏳ Verificando pedido...");
+
+    try {
+      const url = `${SUPABASE_URL}/rest/v1/entregas?codigo_pedido=eq.${encodeURIComponent(codigo_pedido)}&loja_id=eq.${encodeURIComponent(lojaId)}&select=id,codigo_validacao,status`;
+      const resp = await fetch(url, { headers: headers() });
+
+      if (!resp.ok) throw new Error("Erro ao consultar o servidor.");
+
+      const entregas = await resp.json();
+
+      if (!entregas || entregas.length === 0) {
+        mostrarStatus("status_confirmar", "error",
+          `❌ Pedido <strong>${codigo_pedido}</strong> não encontrado.<br>Verifique o número e tente novamente.`
+        );
+        btn.disabled = false;
+        return;
+      }
+
+      const entrega = entregas[0];
+
+      if (entrega.status === "Entregue") {
+        mostrarStatus("status_confirmar", "success", "✅ Este pedido já foi confirmado anteriormente.");
+        btn.disabled = false;
+        return;
+      }
+
+      if (String(entrega.codigo_validacao).trim() !== String(codigo_validacao).trim()) {
+        mostrarStatus("status_confirmar", "error",
+          "❌ Código de validação incorreto.<br>Peça o código correto ao operador."
+        );
+        btn.disabled = false;
+        return;
+      }
+
+      mostrarStatus("status_confirmar", "loading", "⏳ Confirmando entrega...");
+
+      const patch = await fetch(`${SUPABASE_URL}/rest/v1/entregas?id=eq.${entrega.id}`, {
+        method: "PATCH",
+        headers: { ...headers(), "Prefer": "return=minimal" },
+        body: JSON.stringify({ status: "Entregue" })
+      });
+
+      if (!patch.ok) throw new Error("Erro ao confirmar no servidor.");
+
+      mostrarStatus("status_confirmar", "success",
+        `✅ <strong>Entrega confirmada!</strong><br>
+         Pedido <strong>${codigo_pedido}</strong> registrado como Entregue.<br>
+         O sistema da loja foi notificado automaticamente.`
+      );
+      btn.textContent = "✅ Entrega Registrada";
+
+      // Limpa os campos para o próximo pedido (sem precisar recarregar)
+      setTimeout(() => {
+        document.getElementById("inp_pedido").value = "";
+        document.getElementById("inp_validacao").value = "";
+        btn.disabled = false;
+        btn.textContent = "✅ Confirmar Entrega";
+        esconderStatus("status_confirmar");
+      }, 4000);
+
+    } catch (err) {
+      mostrarStatus("status_confirmar", "error", "❌ Erro de conexão: " + err.message);
+      btn.disabled = false;
+    }
+  }
+
+  // Confirmar com Enter
+  document.addEventListener("keydown", e => {
+    if (e.key !== "Enter") return;
+    const tConfirmar = document.getElementById("tela_confirmar").classList.contains("ativa");
+    const tVincular  = document.getElementById("tela_vincular").classList.contains("ativa");
+    if (tConfirmar) confirmarEntrega();
+    if (tVincular)  vincularLoja();
   });
 </script>
-
 </body>
 </html>

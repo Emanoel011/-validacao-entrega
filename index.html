@@ -35,14 +35,14 @@
     }
 
     .logo-icon {
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
       background: #3b82f6;
       border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
+      font-size: 22px;
     }
 
     .logo-text {
@@ -66,7 +66,7 @@
 
     input {
       width: 100%;
-      padding: 12px 14px;
+      padding: 13px 14px;
       background: #0f1117;
       border: 1px solid #2d3148;
       border-radius: 10px;
@@ -76,13 +76,8 @@
       transition: border-color 0.2s;
     }
 
-    input:focus {
-      border-color: #3b82f6;
-    }
-
-    input::placeholder {
-      color: #334155;
-    }
+    input:focus { border-color: #3b82f6; }
+    input::placeholder { color: #2d3556; }
 
     button {
       width: 100%;
@@ -98,45 +93,70 @@
       transition: background 0.2s, transform 0.1s;
     }
 
-    button:hover { background: #2563eb; }
-    button:active { transform: scale(0.98); }
-    button:disabled { background: #1e3a5f; color: #64748b; cursor: not-allowed; }
+    button:hover:not(:disabled) { background: #2563eb; }
+    button:active:not(:disabled) { transform: scale(0.98); }
+    button:disabled { background: #1e3a5f; color: #4a6080; cursor: not-allowed; }
 
-    .result {
+    /* Notificação */
+    .toast {
+      display: none;
       margin-top: 20px;
-      padding: 14px 16px;
-      border-radius: 10px;
+      border-radius: 12px;
+      padding: 16px 18px;
       font-size: 14px;
       font-weight: 500;
-      display: none;
       line-height: 1.5;
+      animation: slideIn 0.3s ease;
     }
 
-    .result.success {
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .toast.success {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
       background: #052e16;
-      border: 1px solid #15803d;
+      border: 1px solid #166534;
       color: #4ade80;
-      display: block;
     }
 
-    .result.error {
-      background: #2d0a0a;
-      border: 1px solid #991b1b;
+    .toast.error {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: #1c0a0a;
+      border: 1px solid #7f1d1d;
       color: #f87171;
-      display: block;
     }
 
-    .result-icon {
-      font-size: 20px;
-      display: block;
-      margin-bottom: 6px;
+    .toast.warning {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: #1c1500;
+      border: 1px solid #78350f;
+      color: #fbbf24;
     }
+
+    .toast-icon {
+      font-size: 20px;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .toast-body { display: flex; flex-direction: column; gap: 2px; }
+    .toast-title { font-weight: 700; font-size: 13px; letter-spacing: 0.3px; }
+    .toast-msg { font-weight: 400; opacity: 0.85; }
 
     .spinner {
       display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(255,255,255,0.3);
+      width: 15px;
+      height: 15px;
+      border: 2px solid rgba(255,255,255,0.25);
       border-top-color: #fff;
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
@@ -147,10 +167,11 @@
     @keyframes spin { to { transform: rotate(360deg); } }
 
     .footer {
-      margin-top: 24px;
+      margin-top: 22px;
       text-align: center;
       font-size: 12px;
-      color: #334155;
+      color: #2d3556;
+      line-height: 1.5;
     }
   </style>
 </head>
@@ -181,39 +202,49 @@
     id="codigo"
     placeholder="Ex: AB12"
     autocomplete="off"
-    style="text-transform: uppercase; letter-spacing: 2px;"
+    style="text-transform: uppercase; letter-spacing: 3px; font-size: 18px; font-weight: 600;"
   />
 
-  <button id="btn-confirmar" onclick="confirmarEntrega()">
+  <button id="btn" onclick="confirmarEntrega()">
     Confirmar entrega
   </button>
 
-  <div class="result" id="resultado"></div>
+  <div class="toast" id="toast">
+    <div class="toast-icon" id="toast-icon"></div>
+    <div class="toast-body">
+      <div class="toast-title" id="toast-title"></div>
+      <div class="toast-msg" id="toast-msg"></div>
+    </div>
+  </div>
 
-  <div class="footer">Digite o número do pedido e o código que o cliente te informou</div>
+  <div class="footer">Digite o número do pedido e o código<br>que o cliente te informou</div>
 
 </div>
 
 <script>
-  // =============================================
-  // CONFIGURAÇÃO — substitua pelos seus valores
-  // =============================================
   const SUPABASE_URL = "https://oaxrdgmrzllyhjiskmfj.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_DbRmua1Lzy9AFcAXBPYc6w_Nws3TnXm";
-  // =============================================
 
-  const resultEl = document.getElementById("resultado");
-  const btn = document.getElementById("btn-confirmar");
+  const btn = document.getElementById("btn");
+  const toast = document.getElementById("toast");
+
+  function showToast(tipo, titulo, msg) {
+    toast.className = "toast " + tipo;
+    const icons = { success: "✓", error: "✕", warning: "!" };
+    document.getElementById("toast-icon").textContent = icons[tipo] || "ℹ";
+    document.getElementById("toast-title").textContent = titulo;
+    document.getElementById("toast-msg").textContent = msg;
+    toast.style.animation = "none";
+    void toast.offsetWidth;
+    toast.style.animation = "";
+  }
 
   async function confirmarEntrega() {
     const numPedido = document.getElementById("num_pedido").value.trim();
     const codigo = document.getElementById("codigo").value.trim().toUpperCase();
 
-    resultEl.className = "result";
-    resultEl.style.display = "none";
-
     if (!numPedido || !codigo) {
-      mostrarErro("Preencha o número do pedido e o código.");
+      showToast("warning", "ATENÇÃO", "Preencha o número do pedido e o código.");
       return;
     }
 
@@ -221,37 +252,43 @@
     btn.innerHTML = '<span class="spinner"></span>Verificando...';
 
     try {
-      // 1. Busca o pedido pelo id
       const busca = await fetch(
         `${SUPABASE_URL}/rest/v1/entregas?id=eq.${numPedido}&select=id,codigo_validacao,status`,
         {
           headers: {
             apikey: SUPABASE_ANON_KEY,
             Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+            Accept: "application/json",
           },
         }
       );
 
+      if (!busca.ok) {
+        const errText = await busca.text();
+        showToast("error", "ERRO DE CONEXÃO", `Falha ao consultar pedido. (${busca.status})`);
+        console.error("Erro Supabase SELECT:", busca.status, errText);
+        return;
+      }
+
       const pedidos = await busca.json();
 
       if (!pedidos || pedidos.length === 0) {
-        mostrarErro("Pedido não encontrado. Verifique o número.");
+        showToast("error", "NÃO ENCONTRADO", "Pedido não encontrado. Verifique o número.");
         return;
       }
 
       const pedido = pedidos[0];
 
       if (pedido.status === "Entregue") {
-        mostrarErro("Este pedido já foi confirmado anteriormente.");
+        showToast("warning", "JÁ CONFIRMADO", "Este pedido já foi confirmado anteriormente.");
         return;
       }
 
       if (pedido.codigo_validacao !== codigo) {
-        mostrarErro("Código incorreto. Peça ao cliente para confirmar o código.");
+        showToast("error", "CÓDIGO INCORRETO", "Peça ao cliente para confirmar o código.");
         return;
       }
 
-      // 2. Atualiza status para Entregue
       const update = await fetch(
         `${SUPABASE_URL}/rest/v1/entregas?id=eq.${numPedido}`,
         {
@@ -267,33 +304,25 @@
       );
 
       if (!update.ok) {
-        mostrarErro("Erro ao confirmar. Tente novamente.");
+        const errText = await update.text();
+        showToast("error", "ERRO AO CONFIRMAR", `Não foi possível atualizar. (${update.status})`);
+        console.error("Erro Supabase PATCH:", update.status, errText);
         return;
       }
 
-      mostrarSucesso(`Pedido #${numPedido} confirmado com sucesso!\nO sistema do estabelecimento foi atualizado.`);
+      showToast("success", "ENTREGA CONFIRMADA", `Pedido #${numPedido} confirmado! O estabelecimento foi notificado.`);
       document.getElementById("num_pedido").value = "";
       document.getElementById("codigo").value = "";
 
     } catch (e) {
-      mostrarErro("Sem conexão. Verifique sua internet e tente novamente.");
+      showToast("error", "SEM CONEXÃO", "Verifique sua internet e tente novamente.");
+      console.error("Erro de rede:", e);
     } finally {
       btn.disabled = false;
       btn.innerHTML = "Confirmar entrega";
     }
   }
 
-  function mostrarSucesso(msg) {
-    resultEl.innerHTML = `<span class="result-icon">✓</span>${msg.replace(/\n/g, "<br>")}`;
-    resultEl.className = "result success";
-  }
-
-  function mostrarErro(msg) {
-    resultEl.innerHTML = `<span class="result-icon">✕</span>${msg}`;
-    resultEl.className = "result error";
-  }
-
-  // Confirmar com Enter
   document.addEventListener("keydown", (e) => {
     if (e.key === "Enter") confirmarEntrega();
   });

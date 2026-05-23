@@ -281,7 +281,11 @@
       const url = `${SUPABASE_URL}/rest/v1/entregas?hwid=eq.${encodeURIComponent(hwid)}&select=loja_id&limit=1`;
       const resp = await fetch(url, { headers: headers() });
 
-      if (!resp.ok) throw new Error("Erro ao consultar servidor.");
+      if (!resp.ok) {
+        let detail = "";
+        try { const e = await resp.json(); detail = e.message || e.hint || JSON.stringify(e); } catch(_){}
+        throw new Error(`HTTP ${resp.status} — ${detail || resp.statusText}`);
+      }
 
       const dados = await resp.json();
 
@@ -345,7 +349,11 @@
       const url = `${SUPABASE_URL}/rest/v1/entregas?codigo_pedido=eq.${encodeURIComponent(codigo_pedido)}&loja_id=eq.${encodeURIComponent(lojaId)}&select=id,codigo_validacao,status`;
       const resp = await fetch(url, { headers: headers() });
 
-      if (!resp.ok) throw new Error("Erro ao consultar o servidor.");
+      if (!resp.ok) {
+        let detail = "";
+        try { const e = await resp.json(); detail = e.message || e.hint || JSON.stringify(e); } catch(_){}
+        throw new Error(`HTTP ${resp.status} — ${detail || resp.statusText}`);
+      }
 
       const entregas = await resp.json();
 
